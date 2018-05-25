@@ -1,6 +1,7 @@
 FROM openjdk:8-jdk
 
 ENV ANDROID_HOME /opt/android-sdk
+ENV GOPATH /opt/go
 
 # ------------------------------------------------------
 # --- Base pre-installed tools
@@ -50,25 +51,18 @@ ENV PATH $PATH:/usr/local/go/bin
 # Go Workspace dirs & envs
 # From the official Golang Dockerfile
 #  https://github.com/docker-library/golang
-ENV GOPATH /bitrise/go
 ENV PATH $GOPATH/bin:$PATH
 # 755 because Ruby complains if 777 (warning: Insecure world writable dir ... in PATH)
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 755 "$GOPATH"
 
-
 # Install NodeJS
 #  from official docs: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs
-
+RUN apt-get install -y nodejs
 
 # ------------------------------------------------------
 # --- Install required tools
-
 RUN apt-get update --yes
-
-# Base (non android specific) tools
-# -> should be added to bitriseio/docker-bitrise-base
 
 # Dependencies to execute Android builds
 RUN dpkg --add-architecture i386
@@ -94,16 +88,7 @@ RUN cd /opt \
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 
 # ------------------------------------------------------
-# --- Install Gradle from PPA
-
-# Gradle PPA
-RUN apt-get update \
- && apt-get -y install gradle \
- && gradle -v
-
-# ------------------------------------------------------
 # --- Install Maven 3 from PPA
-
 RUN apt-get purge maven maven2 \
  && apt-get update \
  && apt-get -y install maven \
@@ -111,14 +96,10 @@ RUN apt-get purge maven maven2 \
 
 # ------------------------------------------------------
 # --- Pre-install Ionic and Cordova CLIs
-#RUN apt install --yes npm nodejs
-#RUN npm install -g ionic cordova
+RUN apt install --yes npm 
+RUN npm config set registry http://registry.npmjs.org/
+RUN npm install -g ionic cordova
 
-# ------------------------------------------------------
-# --- Install Fastlane
-
-#RUN gem install fastlane --no-document \
-# && fastlane --version
 
 # ------------------------------------------------------
 # --- Install Android SDKs and other build packages
@@ -146,44 +127,48 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 # The `yes` is for accepting all non-standard tool licenses.
 
 # Please keep all sections in descending order!
+# If necessary, activate the components bellow
 RUN yes | sdkmanager \
     "platforms;android-27" \
-    "platforms;android-26" \
-    "platforms;android-25" \
-    "platforms;android-24" \
-    "platforms;android-23" \
-    "platforms;android-22" \
-    "platforms;android-21" \
-    "platforms;android-19" \
-    "platforms;android-17" \
-    "platforms;android-15" \
+#    "platforms;android-26" \
+#    "platforms;android-25" \
+#    "platforms;android-24" \
+#    "platforms;android-23" \
+#    "platforms;android-22" \
+#    "platforms;android-21" \
+#    "platforms;android-19" \
+#    "platforms;android-17" \
+#    "platforms;android-15" \
     "build-tools;27.0.3" \
     "build-tools;27.0.2" \
     "build-tools;27.0.1" \
     "build-tools;27.0.0" \
-    "build-tools;26.0.2" \
-    "build-tools;26.0.1" \
-    "build-tools;26.0.0" \
-    "build-tools;25.0.3" \
-    "build-tools;24.0.3" \
-    "build-tools;23.0.3" \
-    "build-tools;22.0.1" \
-    "build-tools;21.1.2" \
-    "build-tools;19.1.0" \
-    "build-tools;17.0.0" \
+#    "build-tools;26.0.2" \
+#    "build-tools;26.0.1" \
+#    "build-tools;26.0.0" \
+#    "build-tools;25.0.3" \
+#    "build-tools;24.0.3" \
+#    "build-tools;23.0.3" \
+#    "build-tools;22.0.1" \
+#    "build-tools;21.1.2" \
+#    "build-tools;19.1.0" \
+#    "build-tools;17.0.0" \
     "system-images;android-26;google_apis;x86" \
-    "system-images;android-25;google_apis;armeabi-v7a" \
-    "system-images;android-24;default;armeabi-v7a" \
-    "system-images;android-22;default;armeabi-v7a" \
-    "system-images;android-19;default;armeabi-v7a" \
+#    "system-images;android-25;google_apis;armeabi-v7a" \
+#    "system-images;android-24;default;armeabi-v7a" \
+#    "system-images;android-22;default;armeabi-v7a" \
+#    "system-images;android-19;default;armeabi-v7a" \
     "extras;android;m2repository" \
     "extras;google;m2repository" \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
-    "add-ons;addon-google_apis-google-23" \
-    "add-ons;addon-google_apis-google-22" \
-    "add-ons;addon-google_apis-google-21"
+    "add-ons;addon-google_apis-google-23" 
+#    "add-ons;addon-google_apis-google-22" \
+#    "add-ons;addon-google_apis-google-21"
+
+# Cleaning
+RUN apt-get clean
 
 # Create directory to host the application
 RUN mkdir /opt/app
