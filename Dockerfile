@@ -173,6 +173,10 @@ RUN yes | sdkmanager \
 #    "add-ons;addon-google_apis-google-22" \
 #    "add-ons;addon-google_apis-google-21"
 
+# deleting sdk images 
+RUN rm -rf /opt/android-sdk/system-images \
+ && mkdir /opt/android-sdk/system-images
+
 # Cleaning
 RUN apt-get clean
 
