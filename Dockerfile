@@ -1,11 +1,17 @@
 FROM openjdk:8-jdk
 
+LABEL maintainer "maciel.bombonato@gmail.com"
+
 ENV ANDROID_HOME /opt/android-sdk
 ENV GOPATH /opt/go
 
 # ------------------------------------------------------
-# --- Base pre-installed tools
-RUN apt-get update -qq
+# --- Base pre-installation
+
+# --- Remove another maven installations and prepare to 
+# install required packages
+RUN apt-get purge maven maven2 --yes \
+ && apt-get update --yes
 
 # Generate proper EN US UTF-8 locale
 # Install the "locales" package - required for locale-gen
@@ -36,7 +42,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     imagemagick \
     awscli \
 # For PPAs
-    software-properties-common
+    software-properties-common \
+# Build tools
+    maven
+
+# Install gradle
+RUN wget --no-check-certificate https://services.gradle.org/distributions/gradle-4.7-bin.zip?_ga=2.231650783.1772064128.1527540661-637361431.1521740106 -O gradle-4.7-bin.zip \
+ && unzip -d /opt gradle-4.7-bin.zip
+
+ENV PATH $PATH:/opt/gradle-4.7/bin
 
 # ------------------------------------------------------
 # --- Pre-installed but not through apt-get
@@ -88,18 +102,10 @@ RUN cd /opt \
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 
 # ------------------------------------------------------
-# --- Install Maven 3 from PPA
-RUN apt-get purge maven maven2 \
- && apt-get update \
- && apt-get -y install maven \
- && mvn --version
-
-# ------------------------------------------------------
 # --- Pre-install Ionic and Cordova CLIs
-RUN apt install --yes npm 
-RUN npm config set registry http://registry.npmjs.org/
-RUN npm install -g ionic cordova
-
+#RUN apt install --yes npm 
+#RUN npm config set registry http://registry.npmjs.org/
+#RUN npm install -g ionic cordova
 
 # ------------------------------------------------------
 # --- Install Android SDKs and other build packages
@@ -140,9 +146,9 @@ RUN yes | sdkmanager \
 #    "platforms;android-17" \
 #    "platforms;android-15" \
     "build-tools;27.0.3" \
-    "build-tools;27.0.2" \
-    "build-tools;27.0.1" \
-    "build-tools;27.0.0" \
+#    "build-tools;27.0.2" \
+#    "build-tools;27.0.1" \
+#    "build-tools;27.0.0" \
 #    "build-tools;26.0.2" \
 #    "build-tools;26.0.1" \
 #    "build-tools;26.0.0" \
