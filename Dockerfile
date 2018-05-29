@@ -10,8 +10,7 @@ ENV GOPATH /opt/go
 
 # --- Remove another maven installations and prepare to 
 # install required packages
-RUN apt-get purge maven maven2 --yes \
- && apt-get update --yes
+RUN apt-get update --yes
 
 # Generate proper EN US UTF-8 locale
 # Install the "locales" package - required for locale-gen
