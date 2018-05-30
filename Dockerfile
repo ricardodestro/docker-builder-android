@@ -10,17 +10,21 @@ ENV GOPATH /opt/go
 
 # --- Remove another maven installations and prepare to 
 # install required packages
-RUN apt-get update --yes
 
 # Generate proper EN US UTF-8 locale
 # Install the "locales" package - required for locale-gen
+RUN apt-get update --yes
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install -y locales \
 # Do Locale gen
     && locale-gen en_US.UTF-8
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN dpkg --add-architecture i386 \
+ && apt-get update --yes \
+ && DEBIAN_FRONTEND=noninteractive \
+ && apt-get -y install \
 # Requiered
+    apt-utils \
     git \
     mercurial \
     curl \
@@ -43,10 +47,22 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
 # For PPAs
     software-properties-common \
 # Build tools
-    maven
+    maven \
+# Dependencies to execute Android builds
+    openjdk-8-jdk \
+    libc6:i386 \
+    libstdc++6:i386 \
+    libgcc1:i386 \
+    libncurses5:i386 \
+    libz1:i386
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y \
+    nodejs
 
 # Install gradle
-RUN wget --no-check-certificate https://services.gradle.org/distributions/gradle-4.7-bin.zip?_ga=2.231650783.1772064128.1527540661-637361431.1521740106 -O gradle-4.7-bin.zip \
+RUN git config --global http.sslverify "false" \
+ && wget --no-check-certificate https://services.gradle.org/distributions/gradle-4.7-bin.zip?_ga=2.231650783.1772064128.1527540661-637361431.1521740106 -O gradle-4.7-bin.zip \
  && unzip -d /opt gradle-4.7-bin.zip
 
 ENV PATH $PATH:/opt/gradle-4.7/bin
@@ -67,27 +83,6 @@ ENV PATH $PATH:/usr/local/go/bin
 ENV PATH $GOPATH/bin:$PATH
 # 755 because Ruby complains if 777 (warning: Insecure world writable dir ... in PATH)
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 755 "$GOPATH"
-
-# Install NodeJS
-#  from official docs: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
-RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-RUN apt-get install -y nodejs
-
-# ------------------------------------------------------
-# --- Install required tools
-RUN apt-get update --yes
-
-# Dependencies to execute Android builds
-RUN dpkg --add-architecture i386
-RUN apt-get update --yes
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
-    openjdk-8-jdk \
-    libc6:i386 \
-    libstdc++6:i386 \
-    libgcc1:i386 \
-    libncurses5:i386 \
-    libz1:i386
 
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
@@ -177,7 +172,15 @@ RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
 
 # Cleaning
-RUN apt-get clean
+RUN apt-get clean --yes
+
+# ---------------------------------------------------------------
+# Install buck
+
+RUN wget --no-check-certificate https://github.com/facebook/buck/releases/download/v2018.03.26.01/buck_2018.03.26_all.deb -O buck_2018.03.26_all.deb \
+ && dpkg -i buck_2018.03.26_all.deb \
+ && buck --version
+
 
 # Create directory to host the application
 RUN mkdir /opt/app
