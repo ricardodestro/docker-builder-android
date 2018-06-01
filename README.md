@@ -26,6 +26,7 @@ Esta imagem possui:
 - awscli 
 - software-properties-common 
 - maven
+- ant
 - gradle 
 - go
 - nodejs
