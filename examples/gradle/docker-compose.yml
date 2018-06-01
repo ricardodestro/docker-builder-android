@@ -2,5 +2,5 @@ android_build:
   image: macielbombonato/docker-androidsdk:27.0.3
   command: gradle build --stacktrace
   volumes:
-#    - /etc/ssl/certs:/etc/ssl/certs
+    - /etc/ssl/certs:/etc/ssl/certs
     - ./:/opt/app

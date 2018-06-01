@@ -1,0 +1,6 @@
+android_build:
+  build: .
+  command: gradle build sonarqube --stacktrace
+  volumes:
+    - /etc/ssl/certs:/etc/ssl/certs
+    - ./:/opt/app

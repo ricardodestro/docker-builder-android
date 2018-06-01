@@ -52,3 +52,20 @@ Na pasta *examples* deste repositório existem subpastas com nomes de builders. 
 3. Execute a linha de comando ```docker-compose run android_build```;
 
 > Caso tenha problemas de certificados SSL (por conta de sua rede), talvez ajude descomentar a linha de certificados e caso necessário ajustar os caminhos na sua máquina.
+  
+---
+  
+### Customizando a imagem
+
+Caso a imagem como está não atenda todas suas necessidade, é possível realizar customizações nela.
+
+No diretório ```examples/gradle-sonar``` existe um exemplo onde a imagem base recebeu algumas customizações para que o processo de build já realizasse a publicação do relatório no Sonarqube no final do processo.
+
+Neste caso, copie os dois arquivos desta pasta para o diretório raiz do seu projeto, realize os ajustes necessários neles e execute os comandos abaixo.
+
+```
+docker-compose build
+docker-compose run android_build
+```
+  
+---  
