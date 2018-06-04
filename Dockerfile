@@ -1,6 +1,8 @@
 FROM openjdk:8-jdk
 
-LABEL maintainer "maciel.bombonato@gmail.com"
+LABEL maintainer "Maciel Escudero Bombonato <maciel.bombonato@gmail.com>"
+
+USER root
 
 ENV ANDROID_HOME /opt/android-sdk
 ENV GOPATH /opt/go
@@ -37,6 +39,9 @@ RUN dpkg --add-architecture i386 \
     python-dev \
     python-pip \
 # Common, useful
+    libssl-dev \
+    autoconf \
+    libtool \
     build-essential \
     zip \
     unzip \
@@ -61,7 +66,8 @@ RUN dpkg --add-architecture i386 \
 # Install gradle
 RUN git config --global http.sslverify "false" \
  && wget --no-check-certificate https://services.gradle.org/distributions/gradle-4.7-bin.zip?_ga=2.231650783.1772064128.1527540661-637361431.1521740106 -O gradle-4.7-bin.zip \
- && unzip -d /opt gradle-4.7-bin.zip
+ && unzip -d /opt gradle-4.7-bin.zip \
+ && rm /gradle-4.7-bin.zip
 
 ENV PATH $PATH:/opt/gradle-4.7/bin
 
@@ -85,11 +91,11 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 755 "$GOPATH"
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
 RUN cd /opt \
-    && wget -q --no-check-certificate \
+ && wget --no-check-certificate \
         https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip \
-        -O android-sdk-tools.zip \
-    && unzip android-sdk-tools.zip -d ${ANDROID_HOME} \
-    && rm android-sdk-tools.zip
+        -O /android-sdk-tools.zip \
+ && unzip /android-sdk-tools.zip -d ${ANDROID_HOME} \
+ && rm /android-sdk-tools.zip
 
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 
@@ -135,8 +141,8 @@ RUN buildDeps='xz-utils' \
     && set -x \
     && apt-get update && apt-get install -y ca-certificates curl wget $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
-    && wget -q --no-check-certificate "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
-    && wget -q --no-check-certificate "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && wget --no-check-certificate "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+    && wget --no-check-certificate "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
     && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -154,8 +160,8 @@ RUN set -ex \
     gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
     gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
   done \
-  && wget -q --no-check-certificate "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && wget -q --no-check-certificate "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+  && wget --no-check-certificate "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+  && wget --no-check-certificate "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
   && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
   && mkdir -p /opt \
   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
@@ -171,14 +177,16 @@ RUN npm config set registry http://registry.npmjs.org/ \
 # ------------------------------------------------------
 # --- Install Android SDKs and other build packages
 
+USER root
+
 # Other tools and resources of Android SDK
 #  you should only install the packages you need!
-# To get a full list of available options you can use:
-RUN sdkmanager --list
 
 # To prevent error in component installations is needed to create an empty file
 # for repositories configuration
-RUN touch /root/.android/repositories.cfg
+RUN touch touch /usr/local/share/android-sdk \
+ && mkdir /root/.android \
+ && touch /root/.android/repositories.cfg
 
 # Accept licenses before installing components, no need to echo y for each component
 # License is valid for all the standard components in versions installed from this file
@@ -195,7 +203,8 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 
 # Please keep all sections in descending order!
 # If necessary, activate the components bellow
-RUN yes | sdkmanager \
+RUN sdkmanager --list \
+ && yes | sdkmanager \
     "platforms;android-27" \
 #    "platforms;android-26" \
 #    "platforms;android-25" \
@@ -220,7 +229,8 @@ RUN yes | sdkmanager \
 #    "build-tools;21.1.2" \
 #    "build-tools;19.1.0" \
 #    "build-tools;17.0.0" \
-    "system-images;android-26;google_apis;x86" \
+    "system-images;android-27;google_apis;x86" \
+#    "system-images;android-26;google_apis;x86" \
 #    "system-images;android-25;google_apis;armeabi-v7a" \
 #    "system-images;android-24;default;armeabi-v7a" \
 #    "system-images;android-22;default;armeabi-v7a" \
@@ -230,7 +240,8 @@ RUN yes | sdkmanager \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
-    "add-ons;addon-google_apis-google-23" 
+    "add-ons;addon-google_apis-google-24" 
+#    "add-ons;addon-google_apis-google-23" \
 #    "add-ons;addon-google_apis-google-22" \
 #    "add-ons;addon-google_apis-google-21"
 
@@ -238,16 +249,17 @@ RUN yes | sdkmanager \
 RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
 
-# Cleaning
-RUN apt-get clean --yes
-
 # ---------------------------------------------------------------
 # Install buck
 
 RUN wget --no-check-certificate https://github.com/facebook/buck/releases/download/v2018.03.26.01/buck_2018.03.26_all.deb -O buck_2018.03.26_all.deb \
  && dpkg -i buck_2018.03.26_all.deb \
- && buck --version
+ && buck --version \
+ && rm -rf /buck-out \
+ && rm /buck_2018.03.26_all.deb 
 
+# Cleaning
+RUN apt-get clean --yes
 
 # Create directory to host the application
 RUN mkdir /opt/app
