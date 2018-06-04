@@ -240,8 +240,8 @@ RUN sdkmanager --list \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
-    "add-ons;addon-google_apis-google-24" 
-#    "add-ons;addon-google_apis-google-23" \
+#    "add-ons;addon-google_apis-google-24" 
+    "add-ons;addon-google_apis-google-23"
 #    "add-ons;addon-google_apis-google-22" \
 #    "add-ons;addon-google_apis-google-21"
 
