@@ -49,7 +49,7 @@ Na pasta *examples* deste repositório existem subpastas com nomes de builders. 
 
 1. Copie o arquivo *docker-compose.yml* da pasta que se adequa com seu projeto para a pasta raiz do projeto;
 2. Caso necessário altere o *command* para que fique de acordo com sua necessidade;
-3. Execute a linha de comando ```docker-compose up``` ou caso esteja executando o terminal no comando do *docker-compose.yml* execute o comando ```docker-compose run android_build```;
+3. Execute a linha de comando ```docker-compose run android_build```;
 
 > Caso tenha problemas de certificados SSL (por conta de sua rede), talvez ajude descomentar a linha de certificados e caso necessário ajustar os caminhos na sua máquina.
   
