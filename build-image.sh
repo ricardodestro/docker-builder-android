@@ -1,5 +1,5 @@
 export REPOSITORY_NAME="macielbombonato"
-export SERVICE_NAME="docker-androidsdk"
+export SERVICE_NAME="docker-builder-android"
 #export VERSION="27.0.3"
 export VERSION="latest"
 
