@@ -1,6 +1,7 @@
 export REPOSITORY_NAME="macielbombonato"
 export SERVICE_NAME="docker-androidsdk"
-export VERSION="27.0.3"
+#export VERSION="27.0.3"
+export VERSION="latest"
 
 export DOCKER_FILE="."
 
