@@ -265,4 +265,4 @@ RUN apt-get clean --yes
 RUN mkdir /opt/app
 WORKDIR /opt/app
 
-CMD sh
+CMD sdkmanager --version
