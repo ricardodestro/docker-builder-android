@@ -53,6 +53,8 @@ Na pasta *examples* deste repositório existem subpastas com nomes de builders. 
 
 > Caso tenha problemas de certificados SSL (por conta de sua rede), talvez ajude descomentar a linha de certificados e caso necessário ajustar os caminhos na sua máquina.
   
+> OBS.: Após o processo de build ser executado com sucesso, execute ```docker-compose down```. Isso deve garantir que sua máquina não mantenha containers no ar sem necessidade.
+  
 ---
   
 ### Customizando a imagem
