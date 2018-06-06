@@ -5,3 +5,4 @@ build:
     - /etc/ssl/certs:/etc/ssl/certs
     - ./:/opt/app
     - ~/.m2:/root/.m2
+    - ~/.gradle:/root/.gradle
