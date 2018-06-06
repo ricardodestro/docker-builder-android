@@ -1,4 +1,4 @@
-FROM macielbombonato/docker-androidsdk:latest
+FROM macielbombonato/docker-builder-android:latest
 
 RUN mkdir ~/.gradle
 RUN echo systemProp.sonar.host.url=http://localhost:9000 >> ~/.gradle/gradle.properties

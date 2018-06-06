@@ -1,4 +1,4 @@
-# docker-androidsdk
+# docker-builder-android
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
   
@@ -8,34 +8,9 @@ Uma imagem docker com alguns utilitários para servir de base para processo de b
 
 Cada projeto deverá ter sua particularidade no processo de build, para esses casos, o projeto deve ter seu **Dockerfile** e o ponto de partida deste será essa imagem.
 
-O ponto de partida desta imagem base é: **openjdk:8-jdk**
+O ponto de partida desta imagem base é: **macielbombonato/docker-builder**
 
 Esta imagem possui:
-
-- git 
-- mercurial 
-- curl 
-- wget 
-- rsync 
-- expect 
-- python 
-- python-dev 
-- python-pip 
-- build-essential 
-- zip 
-- unzip 
-- tree 
-- clang 
-- imagemagick 
-- awscli 
-- software-properties-common 
-- maven
-- ant
-- gradle 
-- go
-- nodejs
-
-Os pontos chave dela são:
 
 - android-sdk-tools
 - sdkmanager

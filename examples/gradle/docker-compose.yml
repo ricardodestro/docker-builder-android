@@ -1,5 +1,5 @@
 build:
-  image: macielbombonato/docker-androidsdk:latest
+  image: macielbombonato/docker-builder-android:latest
   command: gradle build --stacktrace
   volumes:
     - /etc/ssl/certs:/etc/ssl/certs
