@@ -6,9 +6,11 @@ WORKDIR /
 
 USER root
 
+# Update certificates
+RUN update-ca-certificates
+
 ENV ANDROID_HOME /opt/android-sdk
 ENV GOPATH /opt/go
-
 
 # Install gradle
 RUN git config --global http.sslverify "false" \
@@ -137,7 +139,7 @@ RUN touch touch /usr/local/share/android-sdk \
 
 # Accept licenses before installing components, no need to echo y for each component
 # License is valid for all the standard components in versions installed from this file
-# Non-standard components: MIPS system images, preview versions, GDK (Google Glass) and 
+# Non-standard components: MIPS system images, preview versions, GDK (Google Glass) and
 # Android Google TV require separate licenses, not accepted there
 RUN yes | sdkmanager --licenses
 
@@ -187,14 +189,39 @@ RUN sdkmanager --list \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
-#    "add-ons;addon-google_apis-google-24" 
+#    "add-ons;addon-google_apis-google-24"
     "add-ons;addon-google_apis-google-23"
 #    "add-ons;addon-google_apis-google-22" \
 #    "add-ons;addon-google_apis-google-21"
 
-# deleting sdk images 
+# deleting sdk images
 RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
+
+ #Ruby
+ ENV RUBY_MAJOR 2.3
+ ENV RUBY_VERSION 2.3.3
+ ENV RUBY_DOWNLOAD_SHA256 1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc
+ ENV RUBYGEMS_VERSION 2.6.10
+ ENV BUNDLER_VERSION 1.14.3
+
+ ################################################################################################
+###
+### Install Ruby & bundler
+###
+
+RUN gem update
+RUN gem install bundler --version "$BUNDLER_VERSION"
+
+# install things globally, for great justice
+# and don't create ".bundle" in all our apps
+ENV GEM_HOME /usr/local/bundle
+ENV BUNDLE_PATH="$GEM_HOME" \
+  BUNDLE_BIN="$GEM_HOME/bin" \
+  BUNDLE_SILENCE_ROOT_WARNING=1 \
+  BUNDLE_APP_CONFIG="$GEM_HOME"
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
+  && chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
 # Cleaning
 RUN apt-get clean --yes
