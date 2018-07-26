@@ -198,20 +198,24 @@ RUN sdkmanager --list \
 RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
 
- #Ruby
- ENV RUBY_MAJOR 2.3
- ENV RUBY_VERSION 2.3.3
- ENV RUBY_DOWNLOAD_SHA256 1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc
- ENV RUBYGEMS_VERSION 2.6.10
- ENV BUNDLER_VERSION 1.14.3
+################################################################################################
+#Ruby
+ENV RUBY_MAJOR 2.3
+ENV RUBY_VERSION 2.3.3
+ENV RUBY_DOWNLOAD_SHA256 1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc
+ENV RUBYGEMS_VERSION 2.6.10
+ENV BUNDLER_VERSION 1.14.3
 
- ################################################################################################
 ###
 ### Install Ruby & bundler
 ###
 
-RUN gem update
-RUN gem install bundler --version "$BUNDLER_VERSION"
+RUN apt update \
+ && apt install ruby`ruby -e 'puts RUBY_VERSION[/\d+\.\d+/]'`-dev --yes
+
+RUN gem update \
+ && gem install bundle \
+ && gem install bundler --version "$BUNDLER_VERSION"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
