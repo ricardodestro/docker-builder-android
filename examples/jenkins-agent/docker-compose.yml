@@ -1,0 +1,21 @@
+version: "2"
+services:
+  slave_android:
+    image: macielbombonato/docker-builder-android:latest
+    container_name: slave_android
+    #command: sh
+    environment:
+      JAVA_OPTS: "-Djava.awt.headless=true"
+      ARTIFACTORY_URL: "..."
+      ARTIFACTORY_USERNAME: "..."
+      ARTIFACTORY_PASSWORD: "..."
+      CRASHLYTICS_KEY: "..."
+      KEY_ALIAS: "..."
+      KEY_PASSWORD: "..."
+      SLACK_URL: "..."
+      DELIVER_USER: "..."
+      SONAR_URL: "..."
+      SONAR_LOGIN: "..."
+      JENKINS_HOST: "..."
+      JENKINS_SECRET: "..."
+      JENKINS_AGENT_NAME: "..."

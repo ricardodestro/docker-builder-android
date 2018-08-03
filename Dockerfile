@@ -233,4 +233,11 @@ RUN apt-get clean --yes
 # Create directory to host the application
 WORKDIR /opt/app
 
-CMD ["sdkmanager --version", "sdkmanager --list"]
+# Copy sonar scanner to the image
+COPY ./tools/sonar-scanner-3.2.0.1227 /opt/sonar-scanner
+ENV PATH="/opt/sonar-scanner/bin:${PATH}"
+
+# Copy jenkins agent runner to the image
+COPY ./tools/run-jenkins-agent.sh /opt/slave/run-jenkins-agent.sh
+
+CMD /opt/slave/run-jenkins-agent.sh
