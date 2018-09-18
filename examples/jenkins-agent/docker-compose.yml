@@ -2,7 +2,7 @@ version: "2"
 services:
   slave_android:
     image: macielbombonato/docker-builder-android:latest
-    container_name: slave_android
+    #container_name: slave_android
     #command: sh
     environment:
       JAVA_OPTS: "-Djava.awt.headless=true"
@@ -19,3 +19,6 @@ services:
       JENKINS_HOST: "..."
       JENKINS_SECRET: "..."
       JENKINS_AGENT_NAME: "..."
+    volumes:
+      - ~/.gradle:/root/.gradle
+      - ~/workspace:/opt/app
