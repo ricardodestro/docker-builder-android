@@ -30,7 +30,7 @@ export JENKINS_AGENT_WORKDIR="/opt/app"
 #export JENKINS_AGENT_NAME="..."
 
 # Download do conector do agente
-curl ${JENKINS_HOST}/jnlpJars/slave.jar -o "${JENKINS_AGENT_HOME}/${JENKINS_JAR_NAME}" --insecure
+curl ${JENKINS_HOST}/jnlpJars/slave.jar -o "${JENKINS_AGENT_HOME}/${JENKINS_JAR_NAME}" --insecure -noCertificateCheck
 
 # Execucao do agente
 java -jar ${JENKINS_AGENT_HOME}/${JENKINS_JAR_NAME} \
