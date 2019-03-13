@@ -21,7 +21,7 @@ script:
     VERSION="latest";
   fi
 - echo " ===> Building image"
-- docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE:$VERSION $DOCKER_FILE
+- docker build --quiet -t $DOCKER_USERNAME/$DOCKER_IMAGE:$VERSION $DOCKER_FILE
 - echo " ===> Image list"
 - docker images
 - echo " ===> Authentication"
