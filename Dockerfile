@@ -211,7 +211,8 @@ ENV BUNDLER_VERSION 1.14.3
 ###
 
 RUN apt update \
- && apt install ruby`ruby -e 'puts RUBY_VERSION[/\d+\.\d+/]'`-dev --yes
+ && apt install ruby`ruby -e 'puts RUBY_VERSION[/\d+\.\d+/]'`-dev --yes \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN gem update \
  && gem install bundle \
