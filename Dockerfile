@@ -1,6 +1,6 @@
-FROM macielbombonato/docker-builder:latest
+FROM ricardodestro/docker-builder:latest
 
-LABEL maintainer "Maciel Escudero Bombonato <maciel.bombonato@gmail.com>"
+LABEL maintainer "Ricardo Destro <ricardo.destro@gmail.com>"
 
 WORKDIR /
 
@@ -154,6 +154,8 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 # If necessary, activate the components bellow
 RUN sdkmanager --list \
  && yes | sdkmanager \
+    "platforms;android-29" \
+    "platforms;android-28" \
     "platforms;android-27" \
 #    "platforms;android-26" \
 #    "platforms;android-25" \
@@ -164,6 +166,11 @@ RUN sdkmanager --list \
 #    "platforms;android-19" \
 #    "platforms;android-17" \
 #    "platforms;android-15" \
+    "build-tools;29.0.0" \
+    "build-tools;28.0.3" \
+    "build-tools;28.0.2" \
+    "build-tools;28.0.1" \
+    "build-tools;28.0.0" \
     "build-tools;27.0.3" \
 #    "build-tools;27.0.2" \
 #    "build-tools;27.0.1" \
@@ -178,6 +185,8 @@ RUN sdkmanager --list \
 #    "build-tools;21.1.2" \
 #    "build-tools;19.1.0" \
 #    "build-tools;17.0.0" \
+    "system-images;android-29;google_apis;x86" \
+    "system-images;android-28;google_apis;x86" \
     "system-images;android-27;google_apis;x86" \
 #    "system-images;android-26;google_apis;x86" \
 #    "system-images;android-25;google_apis;armeabi-v7a" \
