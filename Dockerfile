@@ -157,55 +157,56 @@ RUN sdkmanager --list \
     "platforms;android-29" \
     "platforms;android-28" \
     "platforms;android-27" \
-#    "platforms;android-26" \
-#    "platforms;android-25" \
-#    "platforms;android-24" \
-#    "platforms;android-23" \
-#    "platforms;android-22" \
-#    "platforms;android-21" \
-#    "platforms;android-19" \
-#    "platforms;android-17" \
-#    "platforms;android-15" \
     "build-tools;29.0.0" \
     "build-tools;28.0.3" \
-    "build-tools;28.0.2" \
-    "build-tools;28.0.1" \
-    "build-tools;28.0.0" \
     "build-tools;27.0.3" \
-#    "build-tools;27.0.2" \
-#    "build-tools;27.0.1" \
-#    "build-tools;27.0.0" \
-#    "build-tools;26.0.2" \
-#    "build-tools;26.0.1" \
-#    "build-tools;26.0.0" \
-#    "build-tools;25.0.3" \
-#    "build-tools;24.0.3" \
-#    "build-tools;23.0.3" \
-#    "build-tools;22.0.1" \
-#    "build-tools;21.1.2" \
-#    "build-tools;19.1.0" \
-#    "build-tools;17.0.0" \
     "system-images;android-29;google_apis;x86" \
     "system-images;android-28;google_apis;x86" \
     "system-images;android-27;google_apis;x86" \
-#    "system-images;android-26;google_apis;x86" \
-#    "system-images;android-25;google_apis;armeabi-v7a" \
-#    "system-images;android-24;default;armeabi-v7a" \
-#    "system-images;android-22;default;armeabi-v7a" \
-#    "system-images;android-19;default;armeabi-v7a" \
     "extras;android;m2repository" \
     "extras;google;m2repository" \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
-#    "add-ons;addon-google_apis-google-24"
+    "add-ons;addon-google_apis-google-24" \
     "add-ons;addon-google_apis-google-23"
-#    "add-ons;addon-google_apis-google-22" \
-#    "add-ons;addon-google_apis-google-21"
+
+# Copy licences
+#COPY licenses/* /opt/android-sdk/licenses/
 
 # deleting sdk images
 RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
+
+################################################################################################	
+#Ruby	
+ENV RUBY_MAJOR 2.5
+ENV RUBY_VERSION 2.5.0	
+ENV RUBY_DOWNLOAD_SHA256 1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc	
+ENV RUBYGEMS_VERSION 2.6.10	
+ENV BUNDLER_VERSION 1.14.3
+
+###	
+### Install Ruby & bundler	
+###	
+
+ RUN apt update \	
+ && apt install ruby`ruby -e 'puts RUBY_VERSION[/\d+\.\d+/]'`-dev --yes \	
+ && rm -rf /var/lib/apt/lists/*	
+
+ RUN gem update \	
+ && gem install bundle \	
+ && gem install bundler --version "$BUNDLER_VERSION"	
+
+ # install things globally, for great justice	
+# and don't create ".bundle" in all our apps	
+ENV GEM_HOME /usr/local/bundle	
+ENV BUNDLE_PATH="$GEM_HOME" \	
+  BUNDLE_BIN="$GEM_HOME/bin" \	
+  BUNDLE_SILENCE_ROOT_WARNING=1 \	
+  BUNDLE_APP_CONFIG="$GEM_HOME"	
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \	
+  && chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
 # Cleaning
 RUN apt-get clean --yes
