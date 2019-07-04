@@ -1,4 +1,4 @@
-FROM ricardodestro/docker-builder:latest
+FROM macielbombonato/docker-builder:latest
 
 LABEL maintainer "Ricardo Destro <ricardo.destro@gmail.com>"
 
@@ -206,36 +206,6 @@ RUN sdkmanager --list \
 # deleting sdk images
 RUN rm -rf /opt/android-sdk/system-images \
  && mkdir /opt/android-sdk/system-images
-
-################################################################################################
-#Ruby
-ENV RUBY_MAJOR 2.3
-ENV RUBY_VERSION 2.3.3
-ENV RUBY_DOWNLOAD_SHA256 1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc
-ENV RUBYGEMS_VERSION 2.6.10
-ENV BUNDLER_VERSION 1.14.3
-
-###
-### Install Ruby & bundler
-###
-
-RUN apt update \
- && apt install ruby`ruby -e 'puts RUBY_VERSION[/\d+\.\d+/]'`-dev --yes \
- && rm -rf /var/lib/apt/lists/*
-
-RUN gem update \
- && gem install bundle \
- && gem install bundler --version "$BUNDLER_VERSION"
-
-# install things globally, for great justice
-# and don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
-ENV BUNDLE_PATH="$GEM_HOME" \
-  BUNDLE_BIN="$GEM_HOME/bin" \
-  BUNDLE_SILENCE_ROOT_WARNING=1 \
-  BUNDLE_APP_CONFIG="$GEM_HOME"
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-  && chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
 # Cleaning
 RUN apt-get clean --yes
